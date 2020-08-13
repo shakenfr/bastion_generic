@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bastion
+  labels:
+    project: your_project
+    base: bastion
+spec:
+  selector:
+    matchLabels:
+      base: bastion
+  template:
+    metadata:
+      labels:
+        base: bastion
+    spec:
+      volumes:
+      - name: work
+        persistentVolumeClaim:
+          claimName: bastion-pv-claim
+      containers:
+        - name: bastion
+          image: shakenfr/bastion:latest
+          volumeMounts:
+          - name: work
+            mountPath: "/home"
+            #- name: buildctl
+            #image: moby/buildkit:master-rootless
+            #image: openshift/origin-custom-docker-builder
+          command: [ "sh", "-c" , "--"]
+          args: [ "while true; do sleep 30; done;" ]
+          volumeMounts:
+          - name: work
+            mountPath: "/home"
+      lifecycle:
+        postStart:
+          exec:
+            command: ['bash']
+
