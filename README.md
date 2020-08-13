@@ -73,7 +73,11 @@ Tools inside :
 To install bastion on openshift
 
   oc apply -f pvc.yaml
+  
   oc apply-f sa.yaml
+  
   oc apply -f rbac.yaml
+  
   oc apply -f deployment.yaml
+  
 
