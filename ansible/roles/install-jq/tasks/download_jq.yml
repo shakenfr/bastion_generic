@@ -1,6 +1,5 @@
 - name: Download jq
   get_url:
-https://github.com/jqlang/jq/releases/download/jq-1.8.1/jq-linux-amd64
     url: "https://github.com/jqlang/jq/releases/download/jq-{{ JQ_VERSION }}/jq-linux-amd64"
     dest: "/tmp"
     force: yes
