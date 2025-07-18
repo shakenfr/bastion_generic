@@ -1,16 +1,33 @@
-- name: Check presence of K9S {{ K9S_VERSION }}
+- name: Check presence of kubens {{ KUBEENS_VERSION }}
   stat:
-    path: /usr/bin/k9s-{{ K9S_VERSION }}
-  register: k9s
+    path: /usr/bin/kubens
+  register: kubens
 
 - include_tasks:
-    file: download_k9s.yml
-  when: not k9s.stat.exists
+    file: download_kubens.yml
+  when: not kubens.stat.exists
   
-- name: Setup default k9s symlink
+- name: Setup default kubens symlink
   file:
-    path: /usr/bin/k9s
+    path: /usr/bin/kubens
     state: link
-    src: k9s-{{ K9S_VERSION }}
+    src: kubens
     force: True
-  when: K9S_DEFAULT
+  when: KUBENS_DEFAULT
+
+- name: Check presence of kubectx {{ KUBECTX_VERSION }}
+  stat:
+    path: /usr/bin/kubectx
+  register: kubectx
+
+- include_tasks:
+    file: download_kubens.yml
+  when: not kubectx.stat.exists
+
+- name: Setup default kubctx symlink
+  file:
+    path: /usr/bin/kubctx
+    state: link
+    src: kubectx
+    force: True
+  when: KUBECTX_DEFAULT
