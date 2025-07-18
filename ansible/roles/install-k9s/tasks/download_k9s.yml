@@ -6,7 +6,7 @@
 
 - name: Download k9s
   get_url:
-    url: "https://github.com/derailed/k9s/releases/download/{{ K9S_VERSION }}/k9s_Linux_x86_64.tar.gz"
+    url: "https://github.com/derailed/k9s/releases/download/{{ K9S_VERSION }}/k9s_Linux_amd64.tar.gz"
     dest: "{{ tmp_file.path }}"
     force: yes
 
