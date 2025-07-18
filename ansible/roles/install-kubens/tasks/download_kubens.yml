@@ -6,7 +6,7 @@
 
 - name: Download kubens
   get_url:
-    url: "https://github.com/ahmetb/kubectx/releases/download/{{ KUBENS_VERSION }}/kubens_{{ KUBENS_VERSION }}_x86_64.tar.gz"
+    url: "https://github.com/ahmetb/kubectx/releases/download/{{ KUBENS_VERSION }}/kubens_{{ KUBENS_VERSION }}_linux_86_64.tar.gz"
     dest: "{{ tmp_file.path }}"
     force: yes
 
@@ -40,7 +40,7 @@
 
 - name: Download kubctx
   get_url:
-    url: "https://github.com/ahmetb/kubectx/releases/download/{{ KUBCTX_VERSION }}/kubectx_{{ KUBECTX_VERSION }}_x86_64.tar.gz"
+    url: "https://github.com/ahmetb/kubectx/releases/download/{{ KUBCTX_VERSION }}/kubectx_{{ KUBECTX_VERSION }}_linux__x86_64.tar.gz"
     dest: "{{ tmp_file.path }}"
     force: yes
 
