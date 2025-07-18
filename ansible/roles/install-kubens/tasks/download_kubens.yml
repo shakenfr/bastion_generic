@@ -40,7 +40,7 @@
 
 - name: Download kubctx
   get_url:
-    url: "https://github.com/ahmetb/kubectx/releases/download/{{ KUBCTX_VERSION }}/kubectx_{{ KUBECTX_VERSION }}_linux_x86_64.tar.gz"
+    url: "https://github.com/ahmetb/kubectx/releases/download/{{ KUBECTX_VERSION }}/kubectx_{{ KUBECTX_VERSION }}_linux_x86_64.tar.gz"
     dest: "{{ tmp_file.path }}"
     force: yes
 
