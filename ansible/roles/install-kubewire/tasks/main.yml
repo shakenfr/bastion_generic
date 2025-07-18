@@ -1,0 +1,8 @@
+- name: Check presence of kubewire
+  stat:
+    path: /usr/bin/kubewire
+  register: kw
+
+- include_tasks:
+    file: download_kubewire.yml
+  when: not kw.stat.exists

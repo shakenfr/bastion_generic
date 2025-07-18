@@ -1,83 +1,46 @@
-# bastion
+# new version to include rclone tool
+you have to put first rclone.conf as a secret inside the same target namespace
+command is :
+kubectl create secret generic rclone --from-file=rclone.conf
+after you have to install bastion-light into your target namespace
+cd manifest
+cd tool-DEV
+kustomize build . |kukectl apply -f -
+inside bastion-light you can access to s3 with :
+rclone --config=/rclone/rclone.conf ls S3FE:/
 
-Toolbox for exploit
-  
-to connect :
-  
-  
-  oc login URL --token <PERMANENT_TOKEN>
-  
-  oc rsh deploy/bastion bash --rcfile /.bashrc
-  
-  or
-  
-  oc rsh deploy/bastion fish    (better !)
-             
-after you can go to /home to do what you want
+# Bastion component for BTD
 
-Tools inside :
+This repository is used to build and deploy the bastion component within the BTD platform.
 
-  git
-  
-  terraform +some plugin  for kibana
-  
-  ansible
-  
-  telnet
-  
-  scp
-  
-  sftp
-  
-  mongo client
-  
-  python2
-  
-  python3
-  
-  gcc
-  
-  sshpass
-  
-  expect
-  
-  oc
-  
-  kubectl
-  
-  eoc
-  
-  ksh
-  
-  bash
-  
-  perl
-  
-  fish
-  
-  nvi
-  
-  joe
-  
-  vim
-  
-  curl & wget
-  
-  netcat
-  
-  openssl
-  
-  busybox
-  
+Bastion contains a set of tools which are installed using Ansible (Kubernetes tools, DB clients, ...).
 
-To install bastion on openshift
+Bastion is both provided as a Docker image, and as a VM deployed in Flexible Engine with Terraform.
 
-  oc apply -f pvc.yaml
-  
-  oc apply-f sa.yaml
-  
-  oc apply -f rbac.yaml
-  
-  oc apply -f deployment.yaml
-  
+# Prerequites
+
+create secrets inside the target namespace (btd) to retrieve keys/token to access 
+ntral repository , openshift access and btd kubernetes access
+
+After that you can create the secret inside tools's namespace.
+
+kubectl create secret docker-registry gitlab-btd-registries \
+     --docker-server=registry.gitlab.tech.orange \
+     --docker-username=bot-107501 \
+     --docker-password=<HERE_THE_RETRIEVE_PASSWORD> \
+     --docker-email=unused --dry-run -o yaml > secret-gitlab-btd-registries.yaml
+
+kubectl apply -f secret-gitlab-btd-registries.yaml
+
+or kubectl create secret generic central-repository --from-file=your file taken from vault
+
+
+
+# Launch
+
+when you are inside the BTD kube cluster
+
+kubectl exec -ti bastion-0 bash
+
+
 

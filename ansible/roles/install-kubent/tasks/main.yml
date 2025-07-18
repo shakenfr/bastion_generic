@@ -1,0 +1,16 @@
+- name: Check presence of kubent {{ KNT_VERSION }}
+  stat:
+    path: /usr/bin/kubent-{{ KNT_VERSION }}
+  register: knt
+
+- include_tasks:
+    file: download_kubent.yml
+  when: not knt.stat.exists
+  
+- name: Setup default kubent symlink
+  file:
+    path: /usr/bin/kubent
+    state: link
+    src: kubent-{{ KNT_VERSION }}
+    force: True
+  when: KNT_DEFAULT

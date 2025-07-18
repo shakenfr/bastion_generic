@@ -1,0 +1,16 @@
+- name: Download jq
+  get_url:
+https://github.com/jqlang/jq/releases/download/jq-1.8.1/jq-linux-amd64
+    url: "https://github.com/jqlang/jq/releases/download/jq-{{ JQ_VERSION }}/jq-linux-amd64"
+    dest: "/tmp"
+    force: yes
+
+- name: Move jq binary
+  command: mv /tmp/jq-linux-amd64 /usr/bin/jq
+  changed_when: False
+
+- name: change right for jq
+  ansible.builtin.file:
+    path: "/usr/bin/jq"
+    owner: root
+    mode: '0777'

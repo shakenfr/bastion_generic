@@ -1,0 +1,24 @@
+# https://aquasecurity.github.io/trivy/latest/getting-started/installation/
+
+- name: Install required packages for Trivy
+  apt:
+    update_cache: yes
+    state: latest
+    name:
+    - apt-transport-https
+
+- name: Install Trivy signing key
+  apt_key:
+    url: https://aquasecurity.github.io/trivy-repo/deb/public.key
+
+- name: Add Trivy repository
+  copy:
+    content: "deb https://aquasecurity.github.io/trivy-repo/deb focal main"
+    dest: /etc/apt/sources.list.d/trivy.list
+    
+- name: Install trivy
+  apt:
+    update_cache: yes
+    state: latest
+    name:
+    - trivy

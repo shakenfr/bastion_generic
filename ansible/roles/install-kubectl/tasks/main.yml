@@ -1,0 +1,27 @@
+# https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-using-native-package-management
+
+- name: Install required packages for kubectl
+  apt:
+    update_cache: yes
+    state: latest
+    name:
+    - apt-transport-https
+    - ca-certificates
+
+- name: download kubectl
+  get_url:
+    url: https://dl.k8s.io/release/v1.33.0/bin/linux/amd64/kubectl
+    dest: /usr/bin/kubectl
+    mode: 07555
+    force: yes
+    
+- name: Generate kubectl auto-completion
+  shell: "kubectl completion bash >/etc/bash_completion.d/kubectl"
+  changed_when: False
+
+- name: Download ekubectl
+  get_url:
+    url: https://github.com/shakenfr/cloud_tools/raw/master/ekubectl
+    dest: /usr/bin/ekubectl
+    mode: 0755
+    force: yes

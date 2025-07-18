@@ -1,0 +1,8 @@
+- name: Check presence of arkade
+  stat:
+    path: /usr/bin/arkade
+  register: arkade
+
+- include_tasks:
+    file: download_arkade.yml
+  when: not arkade.stat.exists

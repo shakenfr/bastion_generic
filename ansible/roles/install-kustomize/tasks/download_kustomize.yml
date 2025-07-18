@@ -1,0 +1,34 @@
+- name: Get temporary file
+  tempfile:
+    state: file
+    suffix: .tar.gz
+  register: tmp_file
+
+- name: Download kustomize
+  get_url:
+    url: "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv{{KUSTOMIZE_VERSION}}/kustomize_v{{KUSTOMIZE_VERSION}}_linux_amd64.tar.gz"
+    dest: "{{ tmp_file.path }}"
+    force: yes
+
+- name: Extract kustomize binary
+  unarchive:
+    src: "{{ tmp_file.path }}"
+    copy: no
+    dest: /tmp
+    mode: 0755
+
+- name: Remove temporary file
+  file:
+    path: "{{ tmp_file.path }}"
+    state: absent
+
+- name: Move kustomize binary
+  command: mv /tmp/kustomize /usr/bin/kustomize
+  changed_when: False
+
+- name: Change file ownership, group and permissions
+  ansible.builtin.file:
+    path: /usr/bin/kustomize
+    owner: root
+    group: root
+    mode: '0755'

@@ -1,0 +1,9 @@
+- name: Check presence of nodejs {{ NODEJS_VERSION }}
+  stat:
+    path: /app/nodejs-v{{ NODEJS_VERSION }}-linux-x64
+  register: nodejs
+
+- include_tasks:
+    file: download_nodejs.yml
+  when: not nodejs.stat.exists
+  

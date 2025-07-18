@@ -1,0 +1,9 @@
+- name: Check presence of vault
+  stat:
+    path: /usr/bin/vault
+  register: vault
+
+- include_tasks:
+    file: download-vault.yml
+  when: not vault.stat.exists
+  

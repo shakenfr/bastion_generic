@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: bastion
+spec:
+  replicas: 1
+  podManagementPolicy: Parallel
+  revisionHistoryLimit: 10
+  serviceName: bastion
+  template:
+    spec:
+      serviceAccountName: admin-bastion
+      containers:
+      - name: bastion
+        image: bastion
+        volumeMounts:
+        - name: home
+          mountPath: "/home"
+          #- name: kubeconfig
+          #mountPath: /.kube.default
+        - name: openshift
+          mountPath: "/openshift"
+        - name: kube
+          mountPath: "/kube"
+        - name: rclonee
+          mountPath: "/rclone"
+        envFrom:
+        - configMapRef:
+            name: bastion
+        resources:
+          limits:
+            cpu: 1500m
+            memory: 4096Mi
+          requests:
+            cpu: 1000m
+            memory: 3000Mi
+      imagePullSecrets:
+        - name: central-repo-registry
+          #      volumes:
+          #- name: kubeconfig
+          #secret:
+          #secretName: bastion-kubeconfig
+      terminationGracePeriodSeconds: 2
+      volumes:
+      - name: openshift
+        secret:
+          secretName: openshift-secret-file
+      - name: kube
+        secret: 
+          secretName: kubernetes-config
+      - name: rclone
+        secret: 
+          secretName: rclone
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: home
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 25Gi
+      storageClassName: nfs-client

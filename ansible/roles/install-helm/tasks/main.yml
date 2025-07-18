@@ -1,0 +1,24 @@
+# https://helm.sh/docs/intro/install/
+
+- name: Install required packages for helm
+  apt:
+    update_cache: yes
+    state: latest
+    name:
+    - apt-transport-https
+
+- name: Install Helm signing key
+  apt_key:
+    url: https://baltocdn.com/helm/signing.asc
+
+- name: Add Helm repository
+  copy:
+    content: "deb https://baltocdn.com/helm/stable/debian/ all main"
+    dest: /etc/apt/sources.list.d/helm-stable-debian.list
+    
+- name: Install helm
+  apt:
+    update_cache: yes
+    state: latest
+    name:
+    - helm

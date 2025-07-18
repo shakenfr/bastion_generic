@@ -1,0 +1,27 @@
+- name: Get temporary file
+  tempfile:
+    state: file
+    suffix: .zip
+  register: tmp_file
+
+- name: Download rclone
+  get_url:
+    url: "https://downloads.rclone.org/rclone-current-linux-amd64.zip"
+    dest: "{{ tmp_file.path }}"
+    force: yes
+
+- name: Extract rclone binary
+  unarchive:
+    src: "{{ tmp_file.path }}"
+    copy: no
+    dest: /tmp
+    mode: 0755
+
+- name: Remove temporary file
+  file:
+    path: "{{ tmp_file.path }}"
+    state: absent
+
+- name: Move rclone binary
+  command: mv /tmp/rclone /usr/bin/rclone
+  changed_when: False

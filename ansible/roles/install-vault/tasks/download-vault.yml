@@ -1,0 +1,27 @@
+- name: Get temporary file
+  tempfile:
+    state: file
+    suffix: .zip
+  register: tmp_file
+
+- name: Download vault
+  get_url:
+    url: "https://releases.hashicorp.com/vault/{{VAULT_VERSION}}/vault_{{VAULT_VERSION}}_linux_amd64.zip"
+    dest: "{{ tmp_file.path }}"
+    force: yes
+
+- name: Extract vault binary
+  unarchive:
+    src: "{{ tmp_file.path }}"
+    copy: no
+    dest: /tmp
+    mode: 0755
+
+- name: Remove temporary file
+  file:
+    path: "{{ tmp_file.path }}"
+    state: absent
+
+- name: Move vault binary
+  command: mv /tmp/vault /usr/bin/vault
+  changed_when: False

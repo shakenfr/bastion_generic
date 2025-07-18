@@ -1,0 +1,31 @@
+- name: Create cloud user
+  user:
+    name: cloud
+    shell: /bin/bash
+
+- name: Initialize cloud profile directories
+  file:
+    path: /home/cloud/{{ item }}
+    state: directory
+    recurse: yes
+    owner: cloud
+    group: cloud
+  with_items:
+  - .kube
+  - .config/fish
+
+- name: Setup cloud profile
+  copy:
+    src: "{{ item | regex_replace('^.*/', '') }}"
+    dest: /home/cloud/{{ item }}
+    owner: cloud
+    group: cloud
+  with_items:
+  - .bashrc
+  - .zshrc
+  - .config/fish/config.fish
+
+- name: Update sudoers for cloud
+  copy:
+    content: "cloud ALL=(ALL) NOPASSWD:ALL"
+    dest: /etc/sudoers.d/cloud

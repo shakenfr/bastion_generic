@@ -1,0 +1,39 @@
+# https://docs.docker.com/engine/install/ubuntu/
+
+- name: Install required packages for Docker
+  apt:
+    update_cache: yes
+    state: latest
+    name:
+    - apt-transport-https
+    - ca-certificates
+    - gnupg
+    - lsb-release
+    - curl
+
+- name: Download Docker's official GPG key
+  shell: "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor --batch --yes -o /usr/share/keyrings/docker-archive-keyring.gpg"
+  args:
+    warn: false
+  changed_when: False
+
+- name: Add Docker repository
+  copy:
+    content: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu focal stable"
+    dest: /etc/apt/sources.list.d/docker.list
+    
+- name: Install Docker
+  apt:
+    update_cache: yes
+    state: latest
+    name:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+
+- name: Add cloud user to docker group
+  user:
+    name: cloud
+    append: yes
+    groups: docker
+

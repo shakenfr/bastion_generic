@@ -1,0 +1,16 @@
+- name: Check presence of K9S {{ K9S_VERSION }}
+  stat:
+    path: /usr/bin/k9s-{{ K9S_VERSION }}
+  register: k9s
+
+- include_tasks:
+    file: download_k9s.yml
+  when: not k9s.stat.exists
+  
+- name: Setup default k9s symlink
+  file:
+    path: /usr/bin/k9s
+    state: link
+    src: k9s-{{ K9S_VERSION }}
+    force: True
+  when: K9S_DEFAULT

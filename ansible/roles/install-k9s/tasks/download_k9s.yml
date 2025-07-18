@@ -1,0 +1,28 @@
+- name: Get temporary file
+  tempfile:
+    state: file
+    suffix: .tar.gz
+  register: tmp_file
+
+- name: Download k9s
+  get_url:
+    url: "https://github.com/derailed/k9s/releases/download/{{ K9S_VERSION }}/k9s_Linux_x86_64.tar.gz"
+    dest: "{{ tmp_file.path }}"
+    force: yes
+
+- name: Extract k9s binary
+  unarchive:
+    src: "{{ tmp_file.path }}"
+    copy: no
+    dest: /tmp
+    exclude: [ README.md, LICENSE ]
+    mode: 0755
+
+- name: Remove temporary file
+  file:
+    path: "{{ tmp_file.path }}"
+    state: absent
+
+- name: Move k9s binary
+  command: mv /tmp/k9s /usr/bin/k9s-{{ K9S_VERSION }}
+  changed_when: False

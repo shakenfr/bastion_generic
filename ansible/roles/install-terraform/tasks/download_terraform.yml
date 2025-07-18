@@ -1,0 +1,27 @@
+- name: Get temporary file
+  tempfile:
+    state: file
+    suffix: .zip
+  register: tmp_file_terraform
+
+- name: Download terraform
+  get_url:
+    url: "https://releases.hashicorp.com/terraform/{{ TF_VERSION }}/terraform_{{ TF_VERSION }}_linux_amd64.zip"
+    dest: "{{ tmp_file_terraform.path }}"
+    force: yes
+
+- name: Extract terraform binary
+  unarchive:
+    src: "{{ tmp_file_terraform.path }}"
+    copy: no
+    dest: /tmp
+    mode: 0755
+
+- name: Remove temporary file
+  file:
+    path: "{{ tmp_file_terraform.path }}"
+    state: absent
+
+- name: Move terraform binary
+  command: mv /tmp/terraform /usr/bin/terraform-{{ TF_VERSION }}
+  changed_when: False

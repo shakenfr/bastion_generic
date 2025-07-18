@@ -1,0 +1,6 @@
+- name: Install sendmail.pl
+  copy:
+    src: sendmail.pl
+    dest: /usr/local/bin/sendmail.pl
+    mode: 0755
+

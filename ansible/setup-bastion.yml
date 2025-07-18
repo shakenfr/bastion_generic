@@ -1,0 +1,57 @@
+
+- hosts: bastion
+  roles:
+  - upgrade-system
+  
+    # cloud user
+  - setup-cloud-user
+
+    # Useful packages
+  - install-extra-packages
+
+    # Terraform
+  - role: install-terraform
+    vars:
+      TF_VERSION: "1.1.7"
+      TF_DEFAULT: False
+  - role: install-terraform
+    vars:
+      TF_VERSION: "1.1.7"
+      TF_DEFAULT: True
+
+    # DB tools
+  - install-mongo-client
+  - install-mongo-tools
+  - install-mongodb
+
+  - install-rclone
+
+    # Docker && Kubernetes tools
+  - install-docker
+  - install-jq
+  - install-kubectl
+  - install-kubens
+  - install-kubewire
+  - install-k9s
+  - install-oc
+  - install-kubent
+  - install-helm
+  - install-kustomize
+  - install-vault
+  - install-yq
+  - install-arkade
+  - install-nodejs
+    
+    # Argocd vault plugin
+  - install-argocd-plugin
+
+    # Trivy
+  - install-trivy
+
+    # Misc
+  - install-sendmail-pl
+
+    # Additional components for bastion VM only
+  - role: install-dnsmasq
+    when: BASTION_TARGET|default == "vm"
+    

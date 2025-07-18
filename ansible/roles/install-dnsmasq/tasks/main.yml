@@ -1,0 +1,12 @@
+
+- name: Install dnsmasq
+  apt:
+    update_cache: yes
+    name: [ dnsmasq ]
+
+- name: Configure dnsmasq
+  copy:
+    src: dnsmasq.conf
+    dest: /etc/dnsmasq.conf
+  notify:
+  - Restart dnsmasq

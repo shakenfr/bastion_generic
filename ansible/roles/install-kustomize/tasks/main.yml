@@ -1,0 +1,8 @@
+- name: Check presence of kustomize
+  stat:
+    path: /usr/bin/kustomize
+  register: kustomize
+
+- include_tasks:
+    file: download_kustomize.yml
+  when: not kustomize.stat.exists

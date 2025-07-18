@@ -1,0 +1,37 @@
+- name: Get temporary file
+  tempfile:
+    state: file
+    suffix: .tar.gz
+  register: tmp_file
+
+- name: Download nodejs
+  get_url:
+    url: "https://nodejs.org/download/release/v{{ NODEJS_VERSION }}/node-v{{ NODEJS_VERSION }}-linux-x64.tar.gz"
+    dest: "{{ tmp_file.path }}"
+    force: yes
+
+- name: Extract nodejs binary
+  unarchive:
+    src: "{{ tmp_file.path }}"
+    copy: no
+    dest: /tmp
+    mode: 0755
+
+- name: create app dir
+  file:
+    path: /app
+    state: directory
+    mode: 0755
+
+- name: Move nodejs binary
+  command: mv /tmp/node-v{{ NODEJS_VERSION }}-linux-x64 /app/ 
+  changed_when: False
+
+- name: Move nodejs binary 
+  command: mv /app/node-v{{ NODEJS_VERSION }}-linux-x64 /app/nodejs
+  changed_when: False
+
+- name: Remove temporary file
+  file:
+    path: "{{ tmp_file.path }}"
+    state: absent

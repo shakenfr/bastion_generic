@@ -1,0 +1,44 @@
+- name: Check presence of terraform {{ TF_VERSION }}
+  stat:
+    path: /usr/bin/terraform-{{ TF_VERSION }}
+  register: tf
+
+- include_tasks:
+    file: download_terraform.yml
+  when: not tf.stat.exists
+  
+- name: Setup default terraform symlink
+  file:
+    path: /usr/bin/terraform
+    state: link
+    src: terraform-{{ TF_VERSION }}
+    force: True
+  when: TF_DEFAULT
+
+- name: Get temporary file
+  tempfile:
+    state: file
+    suffix: .zip
+  register: tmp_file_kibana
+
+- name: Download Kibana provider for Terraform
+  get_url:
+    url: "https://github.com/ewilde/terraform-provider-kibana/releases/download/v0.7.1/terraform-provider-kibana_0.7.1_linux_amd64.zip"
+    dest: "{{ tmp_file_kibana.path }}"
+    force: yes
+
+- name: Extract terraform binary
+  unarchive:
+    src: "{{ tmp_file_kibana.path }}"
+    copy: no
+    dest: /tmp
+    mode: 0755
+
+- name: Remove temporary file
+  file:
+    path: "{{ tmp_file_kibana.path }}"
+    state: absent
+
+- name: Move Kibana provider binary
+  command: mv /tmp/terraform-provider-kibana_v0.7.1 /usr/bin/terraform-provider-kibana_v0.7.1
+  changed_when: False

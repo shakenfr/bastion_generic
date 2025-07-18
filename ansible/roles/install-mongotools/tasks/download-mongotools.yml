@@ -1,0 +1,27 @@
+- name: Get temporary file
+  tempfile:
+    state: file
+    suffix: .tar.gz
+  register: tmp_file
+
+- name: Download mongotools
+  get_url:
+    url: "https://github.com/mongodb/mongo-tools/archive/refs/tags/r{{MONGOTOOLS_VERSION}}.tar.gz"
+    dest: "{{ tmp_file.path }}"
+    force: yes
+
+- name: Extract mongotools binaries
+  unarchive:
+    src: "{{ tmp_file.path }}"
+    copy: no
+    dest: /tmp
+    mode: 0755
+
+- name: Remove temporary file
+  file:
+    path: "{{ tmp_file.path }}"
+    state: absent
+
+- name: Move mongotools folder
+  command: mv /tmp/mongo-tools-r{{MONGOTOOLS_VERSION}}/  /mongotools/
+  changed_when: False

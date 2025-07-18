@@ -1,0 +1,51 @@
+
+.setup_k8s_context: &setup_k8s_context |
+  eval KUBECONFIG_FILE=\$FE_${K8S}_KUBECONFIG
+  mkdir -p ~/.kube ; cp $KUBECONFIG_FILE ~/.kube/config
+  chmod 400 ~/.kube/config
+  kubectl config get-contexts
+  kubectl config use-context $ENV
+  kubectl version -o yaml
+  kubectl get ns btd-$ENV
+
+bastion-deploy:
+  stage: deploy-infra
+  image: $ORIGAMI_DEPLOY_K8S_IMAGE
+  variables:
+    COMPONENT: bastion
+  script:
+  - set -euo pipefail
+  - *setup_k8s_context
+
+    # Copy and customize kubeconfig file
+  - cp -p $KUBECONFIG_FILE bastion/base/kubeconfig.yml
+  - |
+    for CTX in dev prod qualif tool
+    do
+      # Rely on internal cluster for all existing context
+      if kubectl config --kubeconfig bastion/base/kubeconfig.yml get-contexts $CTX 2>/dev/null
+      then
+        kubectl config --kubeconfig bastion/base/kubeconfig.yml set contexts.$CTX.cluster btd-internal
+      fi
+    done
+    kubectl config --kubeconfig bastion/base/kubeconfig.yml use-context tool
+
+    # deploy bastion
+  - cd bastion/tool-$K8S
+  - kustomize build . >bastion.yml
+  - IMAGE=$(kfilt -k Statefulset -n bastion -f bastion.yml | yq4 eval '(.spec.template.spec.containers[] | select(.name=="bastion").image' -)
+  - echo "Deploying bastion on tool@$K8S using $IMAGE image"
+  - kubectl apply -f bastion.yml
+  - namesp=`echo "$K8S" | tr '[:upper:]' '[:lower:]'`
+  - DOMAIN_NAME=$(kubectl get configmap infra-config -o jsonpath='{.data.FE_GIN_DOMAIN}' -n btd-$namesp)
+  - echo $DOMAIN_NAME
+    #  - sed -i ../ingressroute.yml -e s/%DOMAIN_NAME%/$DOMAIN_NAME/
+    #- cat ../ingressroute.yml
+    #- kubectl apply -f ../ingressroute.yml
+
+#  - kustomize build bastion/$ENV |
+#      kapp -y deploy --diff-changes --app-changes-max-to-keep 1
+#        -a bastion -n btd-$ENV
+#        -f -
+
+  rules: !reference [.rules, only-tool]

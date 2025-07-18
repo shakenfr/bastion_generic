@@ -1,0 +1,28 @@
+- name: Get temporary file
+  tempfile:
+    state: file
+    suffix: .tar.gz
+  register: tmp_file
+
+- name: Download oc
+  get_url:
+    url: "https://github.com/openshift/okd/releases/download/{{ OC_VERSION }}/openshift-client-linux-{{OC_VERSION}}.tar.gz"
+    dest: "{{ tmp_file.path }}"
+    force: yes
+
+- name: Extract oc binary
+  unarchive:
+    src: "{{ tmp_file.path }}"
+    copy: no
+    dest: /tmp
+    exclude: [ README.md, LICENSE, kubectl ]
+    mode: 0755
+
+- name: Remove temporary file
+  file:
+    path: "{{ tmp_file.path }}"
+    state: absent
+
+- name: Move oc binary
+  command: mv /tmp/oc /usr/bin/oc
+  changed_when: False

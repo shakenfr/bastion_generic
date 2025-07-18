@@ -1,0 +1,9 @@
+- name: Check presence of vault
+  stat:
+    path: /usr/bin/rclone
+  register: rclone
+
+- include_tasks:
+    file: download-rclone.yml
+  when: not rclone.stat.exists
+  

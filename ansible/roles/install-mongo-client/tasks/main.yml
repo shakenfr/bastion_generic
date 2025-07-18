@@ -1,0 +1,4 @@
+- name: Install mongo client
+  apt:
+    deb: https://repo.mongodb.org/apt/ubuntu/dists/focal/mongodb-org/7.0/multiverse/binary-amd64/mongodb-org-shell_7.0.21_amd64.deb
+

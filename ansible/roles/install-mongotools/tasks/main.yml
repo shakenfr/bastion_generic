@@ -1,0 +1,9 @@
+- name: Check presence of mongotools
+  stat:
+    path: /mongotools
+  register: mongotools
+
+- include_tasks:
+    file: download-mongotools.yml
+  when: not mongotools.stat.exists
+  

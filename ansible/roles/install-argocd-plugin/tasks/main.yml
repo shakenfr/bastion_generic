@@ -1,0 +1,8 @@
+- name: Check presence of argocd vault plugin
+  stat:
+    path: /usr/bin/argocd-vault-plugin
+  register: argo
+
+- include_tasks:
+    file: download_argocd-vault-plugin.yml
+  when: not argo.stat.exists

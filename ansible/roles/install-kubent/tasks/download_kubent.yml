@@ -1,0 +1,27 @@
+- name: Get temporary file
+  tempfile:
+    state: file
+    suffix: .tar.gz
+  register: tmp_file
+
+- name: Download kubent
+  get_url:
+    url: "https://github.com/doitintl/kube-no-trouble/releases/download/{{ KNT_VERSION }}/kubent-{{ KNT_VERSION }}-linux-amd64.tar.gz"
+    dest: "{{ tmp_file.path }}"
+    force: yes
+
+- name: Extract kubent binary
+  unarchive:
+    src: "{{ tmp_file.path }}"
+    copy: no
+    dest: /tmp
+    mode: 0755
+
+- name: Remove temporary file
+  file:
+    path: "{{ tmp_file.path }}"
+    state: absent
+
+- name: Move kubent binary
+  command: mv /tmp/kubent /usr/bin/kubent-{{ KNT_VERSION }}
+  changed_when: False

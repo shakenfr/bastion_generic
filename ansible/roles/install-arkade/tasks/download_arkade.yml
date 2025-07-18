@@ -1,0 +1,16 @@
+- name: Download arkade
+  get_url:
+    url: "https://github.com/alexellis/arkade/releases/download/{{ARKADE_VERSION}}/arkade"
+    dest: "{{ tmp_file.path }}"
+    force: yes
+
+- name: Move arkade binary
+  command: mv "{{ tmp_file.path }}" /usr/bin/arkade
+  changed_when: False
+
+- name: Change file ownership, group and permissions
+  ansible.builtin.file:
+    path: /usr/bin/arkade
+    owner: root
+    group: root
+    mode: '0755'

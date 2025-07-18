@@ -1,0 +1,8 @@
+- name: Check presence of OC {{ OC_VERSION }}
+  stat:
+    path: /usr/bin/oc-{{ OC_VERSION }}
+  register: oc
+
+- include_tasks:
+    file: download_oc.yml
+  when: not oc.stat.exists

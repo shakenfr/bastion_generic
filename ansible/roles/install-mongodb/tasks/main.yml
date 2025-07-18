@@ -1,0 +1,7 @@
+- name: Install mongo db
+  apt:
+    deb: https://repo.mongodb.org/apt/ubuntu/dists/focal/mongodb-org/4.4/multiverse/binary-amd64/mongodb-org-server_4.4.9_amd64.deb
+- name: Install mongo db shell
+  apt:
+    deb: https://repo.mongodb.org/apt/ubuntu/dists/focal/mongodb-org/4.4/multiverse/binary-amd64/mongodb-org-shell_4.4.16_amd64.deb
+

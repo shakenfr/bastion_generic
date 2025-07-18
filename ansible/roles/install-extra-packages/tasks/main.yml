@@ -1,0 +1,44 @@
+- name: Install additional packages
+  apt:
+    update_cache: yes
+    state: latest
+    pkg:
+    - vim
+    - curl
+    - git
+    - wget
+    - software-properties-common
+    - apt-file
+    - apt-transport-https
+    - software-properties-common
+    - ca-certificates
+    - tzdata
+    - binutils
+    - python3.10
+    - python3.10-dev
+    - python3.10-distutils
+    - python3.10-venv
+    - python3.10-lib2to3
+    - python3.10-gdbm
+    - python3.10-tk
+    - unzip
+    - gcc
+    - ksh
+    - build-essential
+    - telnet
+    - sshpass
+    - expect
+    - openssh-server
+    - busybox
+    - libssl-dev
+    - strace
+    - openssl
+    - python3-pip
+    - netcat
+    - fish
+    - bash-completion 
+    - jq
+    - golang
+    - rclone
+    - gettext-base
+

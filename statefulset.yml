@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: bastion
+spec:
+  replicas: 1
+  podManagementPolicy: Parallel
+  revisionHistoryLimit: 10
+  serviceName: bastion
+  template:
+    spec:
+      containers:
+      - name: bastion
+        image: bastion
+        volumeMounts:
+        - name: home
+          mountPath: "/home"
+        - name: kubeconfig
+          mountPath: /.kube.default
+        - name: opt
+          mountPath: "/opt"
+        envFrom:
+        - configMapRef:
+            name: bastion
+        resources:
+          limits:
+            cpu: 900m
+            memory: 2048Mi
+          requests:
+            cpu: 160m
+            memory: 2048Mi
+      volumes:
+      - name: kubeconfig
+        secret:
+          secretName: bastion-kubeconfig
+      terminationGracePeriodSeconds: 2
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: home
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
+      storageClassName: csi-disk
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: opt
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: csi-disk

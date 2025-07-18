@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: bastion-admin
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - kind: Rule
+    match: Host(`bastion.%DOMAIN_NAME%`)
+    services:
+    - kind: Service
+      name: bastion
+      port: 8080
+  tls: {}
+

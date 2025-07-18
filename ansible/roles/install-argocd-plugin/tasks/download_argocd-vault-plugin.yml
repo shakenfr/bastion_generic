@@ -1,0 +1,21 @@
+- name: Get temporary file
+  tempfile:
+    state: file
+  register: tmp_file
+
+- name: Download argocd plugin
+  get_url:
+    url: "https://github.com/argoproj-labs/argocd-vault-plugin/releases/download/v{{ARGO_VERSION}}/argocd-vault-plugin_{{ARGO_VERSION}}_linux_amd64"
+    dest: "{{ tmp_file.path }}"
+    force: yes
+
+- name: Move argocd plugin binary
+  command: mv "{{ tmp_file.path }}" /usr/bin/argocd-vault-plugin
+  changed_when: False
+
+- name: Change file ownership, group and permissions
+  ansible.builtin.file:
+    path: /usr/bin/argocd-vault-plugin
+    owner: root
+    group: root
+    mode: '0755'
